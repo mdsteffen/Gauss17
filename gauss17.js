@@ -47,7 +47,7 @@ function Point(x, y) {
 Point.prototype.Draw = function () {
 	context.beginPath();
 	context.strokeStyle = this.strokeStyle;
-	context.arc(this.x, this.y, 3, 0, 360, false);
+	context.arc(this.x, this.y, 3 / scale, 0, 360, false);
 	context.stroke();
 }
 
@@ -76,7 +76,7 @@ SelectionTool.prototype.onMouseReleased = function () {
 
 	if (pointOnShape.point != null) {
 		var d = pointOnShape.point.distanceTo(mousePoint);
-		if (d < 10)
+		if (d < 10 / scale)
 			selectedShape = pointOnShape.shape;
 	}
 }
@@ -155,9 +155,9 @@ CompassTool.prototype.onMousePressed = function () {
 	this.p1Selected = false;
 	this.p2Selected = false;
 
-	if (d1 < d2 && d1 < 10)
+	if (d1 < d2 && d1 < 10 / scale)
 		this.p1Selected = true;
-	else if (d2 < 10)
+	else if (d2 < 10 / scale)
 		this.p2Selected = true;
 
 	if (this.p1Selected || this.p2Selected)
@@ -200,23 +200,24 @@ CompassTool.prototype.Draw = function () {
 		context.stroke();
 	}
 
+	var l = 5.0 / scale;
 	context.beginPath();
 	context.strokeStyle = "#00AA00";
-	context.moveTo(this.p1.x - 5, this.p1.y - 5);
-	context.lineTo(this.p1.x + 5, this.p1.y + 5);
-	context.moveTo(this.p1.x - 5, this.p1.y + 5);
-	context.lineTo(this.p1.x + 5, this.p1.y - 5);
+	context.moveTo(this.p1.x - l, this.p1.y - l);
+	context.lineTo(this.p1.x + l, this.p1.y + l);
+	context.moveTo(this.p1.x - l, this.p1.y + l);
+	context.lineTo(this.p1.x + l, this.p1.y - l);
 	context.stroke();
 	context.beginPath();
-	context.arc(this.p1.x, this.p1.y, 3, 0, 2 * Math.PI, false);
+	context.arc(this.p1.x, this.p1.y, 3/scale, 0, 2 * Math.PI, false);
 	context.stroke();
 
 	context.beginPath();
 	context.strokeStyle = "#FF0000";
-	context.moveTo(this.p2.x - 5, this.p2.y - 5);
-	context.lineTo(this.p2.x + 5, this.p2.y + 5);
-	context.moveTo(this.p2.x - 5, this.p2.y + 5);
-	context.lineTo(this.p2.x + 5, this.p2.y - 5);
+	context.moveTo(this.p2.x - l, this.p2.y - l);
+	context.lineTo(this.p2.x + l, this.p2.y + l);
+	context.moveTo(this.p2.x - l, this.p2.y + l);
+	context.lineTo(this.p2.x + l, this.p2.y - l);
 	context.stroke();
 }
 
@@ -270,9 +271,9 @@ StraightEdgeTool.prototype.onMousePressed = function () {
 	this.p1Selected = false;
 	this.p2Selected = false;
 
-	if (d1 < d2 && d1 < 10)
+	if (d1 < d2 && d1 < 10 /scale)
 		this.p1Selected = true;
-	else if (d2 < 10)
+	else if (d2 < 10 / scale)
 		this.p2Selected = true;
 
 	if (this.p1Selected || this.p2Selected)
@@ -308,20 +309,21 @@ StraightEdgeTool.prototype.Draw = function () {
 		context.stroke();
 	}
 
+	var l = 5.0 / scale;
 	context.beginPath();
 	context.strokeStyle = "#00AA00";
-	context.moveTo(this.p1.x - 5, this.p1.y - 5);
-	context.lineTo(this.p1.x + 5, this.p1.y + 5);
-	context.moveTo(this.p1.x - 5, this.p1.y + 5);
-	context.lineTo(this.p1.x + 5, this.p1.y - 5);
+	context.moveTo(this.p1.x - l, this.p1.y - l);
+	context.lineTo(this.p1.x + l, this.p1.y + l);
+	context.moveTo(this.p1.x - l, this.p1.y + l);
+	context.lineTo(this.p1.x + l, this.p1.y - l);
 	context.stroke();
 
 	context.beginPath();
 	context.strokeStyle = "#FF0000";
-	context.moveTo(this.p2.x - 5, this.p2.y - 5);
-	context.lineTo(this.p2.x + 5, this.p2.y + 5);
-	context.moveTo(this.p2.x - 5, this.p2.y + 5);
-	context.lineTo(this.p2.x + 5, this.p2.y - 5);
+	context.moveTo(this.p2.x - l, this.p2.y - l);
+	context.lineTo(this.p2.x + l, this.p2.y + l);
+	context.moveTo(this.p2.x - l, this.p2.y + l);
+	context.lineTo(this.p2.x + l, this.p2.y - l);
 	context.stroke();
 }
 
@@ -487,7 +489,7 @@ Arc.prototype.Draw = function () {
 	if(snapToCircleCenters) {
 		context.beginPath();
 		context.fillStyle = this.strokeStyle;
-		context.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
+		context.arc(this.x, this.y, 2/scale, 0, Math.PI * 2, false);
 		context.fill();
 	}
 }
@@ -763,7 +765,12 @@ function DrawScreen() {
 	// Forces redraw
 	canvas.width = canvas.width;
 
-	context.setTransform(1, 0, 0, -1, canvas.width / 2, canvas.height / 2);
+	//context.setTransform(scale, 0, 0, -scale, canvas.width/2, canvas.height/2);
+	context.setTransform(1, 0, 0, -1, 0, 0);
+	context.scale(scale, scale);
+	context.translate(-origin.x, -origin.y);
+	
+	context.lineWidth=1.0/scale;
 	for (i in arcs) {
 		if (arcs[i] == selectedShape)
 			arcs[i].strokeStyle = '#AA0000';
@@ -798,8 +805,8 @@ function DrawScreen() {
 
 function getMousePos(evt) {
 	var rect = canvas.getBoundingClientRect();
-	var x = evt.clientX - rect.left - canvas.width / 2;
-	var y = rect.top - evt.clientY + canvas.height / 2;
+	var x = (evt.clientX - rect.left)/scale + origin.x;
+	var y = (rect.top - evt.clientY)/scale + origin.y
 	return new Point(x, y);
 }
 
@@ -874,14 +881,14 @@ function getCurserPoint(p, evt) {
 	var closestIntersection = getClosestIntersection(p);
 	if (closestIntersection != null) {
 		var distance = p.distanceTo(closestIntersection.point);
-		if (distance < 5) {
+		if (distance < 5 / scale) {
 			usingIntersection = true;
 			closestPoint = closestIntersection.point;
 		}
 	}
 
 	if (closestPoint != null)
-		if (closestPoint.distanceTo(p) < 10)
+		if (closestPoint.distanceTo(p) < 10 / scale)
 			return closestPoint;
 
 	return p;
@@ -911,6 +918,28 @@ function onMouseUp(evt) {
 	DrawScreen();
 }
 
+function onMouseWheel(evt) {
+	var wheel = evt.deltaY / 10;  // Firefox
+	if(Math.abs(wheel) >= 1) {  // IE
+		wheel = wheel * 10 / 120;
+	}
+	var zoom = 1 + wheel/2;
+	
+	var dx = mousePoint.x - origin.x;
+	var dy = mousePoint.y - origin.y;
+	var px = dx * scale;   // pixels in x and y
+	var py = dy * scale;
+	
+	origin.x = mousePoint.x - px / (scale * zoom);
+	origin.y = mousePoint.y - py / (scale * zoom);
+	
+	scale *= zoom;
+	DrawScreen();
+	evt.preventDefault();   // Keep zoom wheel from scrolling page
+	evt.returnValue = false;
+
+}
+
 window.onload = function () {
 	mousePoint = new Point(0, 0);
 	curserPoint = new Point(0, 0);
@@ -921,15 +950,20 @@ window.onload = function () {
 	snapToLines = true;
 	snapToCircleCenters = true;
 	snapToIntersections = true;
+	scale = 1.0;
 	selectedShape = null;
 	selectedTool = compassTool;
 
 	canvas = document.getElementById("pendcanvas");
 	context = canvas.getContext('2d');
 
+	origin = new Point(-canvas.width/2, canvas.height/2);
+
+	
 	canvas.addEventListener('mousemove', onMouseMove);
 	canvas.addEventListener('mousedown', onMouseDown);
 	canvas.addEventListener('mouseup', onMouseUp);
+	canvas.addEventListener('wheel', onMouseWheel);
 
 	DrawScreen();
 }
