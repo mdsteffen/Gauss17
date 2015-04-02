@@ -919,7 +919,7 @@ function onMouseUp(evt) {
 }
 
 function onMouseWheel(evt) {
-	var wheel = evt.deltaY / 10;  // Firefox
+	var wheel = -evt.deltaY / 10;  // Firefox
 	if(Math.abs(wheel) >= 1) {  // IE
 		wheel = wheel * 10 / 120;
 	}
